@@ -175,10 +175,9 @@ extension WayFinding: TravellerWayFindingProtocol {
             
             for controller in navigationController.viewControllers {
                 
-                let className = NSStringFromClass(controller.classForCoder).components(separatedBy: ".").last!
                 switch destination {
                     case let .type(val):
-                        if className == val {
+                        if controller.className == val {
                             if let controller = controller as? T {
                                 configure?(controller)
                                 controller.endEditing()
@@ -186,8 +185,8 @@ extension WayFinding: TravellerWayFindingProtocol {
                                 return controller
                             }
                         }
+                        break
                 }
-                break
             }
         }
         return nil

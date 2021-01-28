@@ -48,6 +48,10 @@ extension UIViewController {
     func endEditing() {
         self.view.endEditing(true)
     }
+    
+    var className: String {
+        return NSStringFromClass(self.classForCoder).components(separatedBy: ".").last!
+    }
 }
 
 protocol TextFieldViewTouchabilityDelegates: class {
