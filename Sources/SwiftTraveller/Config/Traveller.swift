@@ -128,7 +128,7 @@ extension Traveller {
         /**
          !* @discussion:  This function will help to pop the respective view controller from navigation stack, and return back the popped view controller.
          */
-        case popToViewController(destination: AnyClass, animated: Bool, modelTransistionStyle: UIModalTransitionStyle)
+        case popToViewController(destination: ControllerDestination, animated: Bool, modelTransistionStyle: UIModalTransitionStyle)
         
         
         /**

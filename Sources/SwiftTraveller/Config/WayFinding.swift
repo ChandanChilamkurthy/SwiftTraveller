@@ -169,15 +169,25 @@ extension WayFinding: TravellerWayFindingProtocol {
      2. This will check the child controllers of navigation and if destination exists in that, then this will pop to destination,
      */
     
-    func popToViewController<T>(destination: AnyClass, animated: Bool, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    func popToViewController<T>(destination: ControllerDestination, animated: Bool, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+        
         if let navigationController = self.navigation {
-            for controller in navigationController.viewControllers where controller.isKind(of: destination) {
-                if let controller = controller as? T {
-                    configure?(controller)
-                    controller.endEditing()
-                    navigationController.popToViewController(controller, animated: animated)
-                    return controller
+            
+            for controller in navigationController.viewControllers {
+                
+                let className = NSStringFromClass(controller.classForCoder).components(separatedBy: ".").last!
+                switch destination {
+                    case let .type(val):
+                        if className == val {
+                            if let controller = controller as? T {
+                                configure?(controller)
+                                controller.endEditing()
+                                navigationController.popToViewController(controller, animated: animated)
+                                return controller
+                            }
+                        }
                 }
+                break
             }
         }
         return nil

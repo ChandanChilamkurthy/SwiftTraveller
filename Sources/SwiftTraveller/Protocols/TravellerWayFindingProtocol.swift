@@ -11,7 +11,7 @@ protocol TravellerWayFindingProtocol {
     func unwind<T>(to destination: ControllerDestination, modelTransistionStyle: UIModalTransitionStyle, storyBoardSegue: TravellerStoryBoardSegueProtocol, configure: ((T) -> Void)?) -> T? where T : UIViewController
     func removeChild()
     func pop(toRootController: Bool, animated: Bool, modelTransistionStyle: UIModalTransitionStyle)
-    func popToViewController<T>(destination: AnyClass, animated: Bool, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController
+    func popToViewController<T>(destination: ControllerDestination, animated: Bool, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController
     func dismiss(modelTransistionStyle: UIModalTransitionStyle, animated: Bool, dismissed: @escaping ((Bool) -> Void))
 }
 
