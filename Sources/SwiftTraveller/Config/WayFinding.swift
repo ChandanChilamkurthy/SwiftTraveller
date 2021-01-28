@@ -8,7 +8,7 @@ public final class WayFinding: NSObject, UIAdaptivePresentationControllerDelegat
     private var viewController : TravellerViewControllerProtocol?
     private var storyBoard: TravellerStoryBoardProtocol?
     
-    init(navigation: TravellerNavigationProtocol?, viewController : TravellerViewControllerProtocol?, storyBoard: TravellerStoryBoardProtocol?) {
+    public init(navigation: TravellerNavigationProtocol?, viewController : TravellerViewControllerProtocol?, storyBoard: TravellerStoryBoardProtocol?) {
         self.navigation = navigation
         self.storyBoard = storyBoard
         self.viewController = viewController
@@ -30,7 +30,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      3. Then we are fetching navigation via TravellerNavigationProtocol and finally pushing & returning the controller.
      */
     
-    func push<T>(to destination: ControllerDestination, hidesTopBar: Bool, hidesBottomBar: Bool, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, animated: Bool, configure: ((T) -> Void)?) -> T? where T: UIViewController {
+    public func push<T>(to destination: ControllerDestination, hidesTopBar: Bool, hidesBottomBar: Bool, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, animated: Bool, configure: ((T) -> Void)?) -> T? where T: UIViewController {
         if let viewController = UIViewController.makeViewController(for: destination, storyBoard: self.storyBoard , modelPresentationStyle: modelPresentationStyle, modelTransistionStyle: modelTransistionStyle) as? T, let navigation = self.navigation {
             configure?(viewController)
             self.navigation?.setNavigationBarHidden(hidesTopBar, animated: false)
@@ -51,7 +51,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      4. Finally we are presenting the controller & returning it.
      */
     
-    func present<T>(to destination: ControllerDestination, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, animated: Bool, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    public func present<T>(to destination: ControllerDestination, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, animated: Bool, configure: ((T) -> Void)?) -> T? where T : UIViewController {
         if let viewController = UIViewController.makeViewController(for: destination, storyBoard: self.storyBoard, modelPresentationStyle: modelPresentationStyle, modelTransistionStyle: modelTransistionStyle) as? T, let topViewController = self.viewController {
             configure?(viewController)
             self.stackStorage()
@@ -75,7 +75,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      Note: If you'r using tabbar controller in your application, call this function in you'r TabBarController delegate method didSelect. In-order to manage navigation stack in tabbar controller.
      */
     
-    func performSegue<T>(to destination: ControllerDestination , storyBoardProtocol: TravellerStoryBoardProtocol, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    public func performSegue<T>(to destination: ControllerDestination , storyBoardProtocol: TravellerStoryBoardProtocol, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
         if let viewController = UIViewController.makeViewController(for: destination, storyBoard: storyBoardProtocol, modelPresentationStyle: nil, modelTransistionStyle: modelTransistionStyle) as? T, let topViewController: TravellerViewControllerProtocol = self.viewController {
             configure?(viewController)
             viewController.endEditing()
@@ -99,7 +99,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      Note: If you dont want present something from child, then avoid point 3. That will remain same.
      */
     
-    func addChild<T>(to childController: ControllerDestination, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    public func addChild<T>(to childController: ControllerDestination, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
         if let viewController = UIViewController.makeViewController(for: childController, storyBoard: self.storyBoard , modelPresentationStyle: nil, modelTransistionStyle: modelTransistionStyle) as? T, let topController = self.viewController {
             configure?(viewController)
             let wayFinding = WayFinding(navigation: self.navigation, viewController: viewController, storyBoard: self.storyBoard)
@@ -119,7 +119,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      Note: If you'r using tabbar controller in your application, call this function in you'r TabBarController delegate method didSelect. In-order to manage navigation stack in tabbar controller.
      */
     
-    func unwind<T>(to destination: ControllerDestination, modelTransistionStyle: UIModalTransitionStyle, storyBoardSegue: TravellerStoryBoardSegueProtocol, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    public func unwind<T>(to destination: ControllerDestination, modelTransistionStyle: UIModalTransitionStyle, storyBoardSegue: TravellerStoryBoardSegueProtocol, configure: ((T) -> Void)?) -> T? where T : UIViewController {
         if let topViewController = self.viewController as? T , let destinationVc = UIViewController.makeViewController(for: destination, storyBoard: self.storyBoard, modelPresentationStyle: nil, modelTransistionStyle: modelTransistionStyle) as? T{
             configure?(topViewController)
             topViewController.endEditing()
@@ -134,7 +134,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      !* @discussion: This function takes cares of removing child controller on top controller.
      */
     
-    func removeChild() {
+    public func removeChild() {
         if let childViewController = self.viewController {
             childViewController.remove()
         }
@@ -147,7 +147,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      1. Based on the flags toRootController, animated, modelTransistionStyle it gonna act accordinly to navigation.
      */
     
-    func pop(toRootController: Bool, animated: Bool, modelTransistionStyle: UIModalTransitionStyle) {
+    public func pop(toRootController: Bool, animated: Bool, modelTransistionStyle: UIModalTransitionStyle) {
         if let navigationController = self.navigation {
             if toRootController {
                 if (self.viewController?.presentedViewController != nil) {
@@ -169,7 +169,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      2. This will check the child controllers of navigation and if destination exists in that, then this will pop to destination,
      */
     
-    func popToViewController<T>(destination: ControllerDestination, animated: Bool, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    public func popToViewController<T>(destination: ControllerDestination, animated: Bool, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
         
         if let navigationController = self.navigation {
             
@@ -198,7 +198,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      1. Apply modelTransistionStyle and animated flag accordingly.
      */
     
-    func dismiss(modelTransistionStyle: UIModalTransitionStyle, animated: Bool, dismissed: @escaping ((Bool) -> Void)) {
+    public func dismiss(modelTransistionStyle: UIModalTransitionStyle, animated: Bool, dismissed: @escaping ((Bool) -> Void)) {
         if let topViewController = self.viewController{
             topViewController.modalTransitionStyle = modelTransistionStyle
             topViewController.dismiss(animated: animated) { [weak self] in

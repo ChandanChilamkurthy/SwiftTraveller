@@ -50,7 +50,7 @@ public final class Traveller {
      !* @discussion: Configuration part for entire Navigation WayFinding.
      !* @param: TravellerWayFindingProtocol ---> This controls entire WayFinding of the app with the help of WayFinding class which conforms to TravellerWayFindingProtocol & internally this has control over UINavigationController, UIViewController, UIStoryboard, UIStoryboardSegue, UIWindow. Please refere inside logic for more understanding.
      */
-    func config(wayFinding: TravellerWayFindingProtocol?) {
+    public func config(wayFinding: TravellerWayFindingProtocol?) {
         guard let _wayFinding = wayFinding else { fatalError("Traveller config failed to assign router") }
         self.wayFinding = _wayFinding
     }

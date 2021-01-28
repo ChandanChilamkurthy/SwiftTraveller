@@ -3,7 +3,7 @@
 import UIKit
 
 // Mark: WayFinding Attributes
-protocol TravellerWayFindingProtocol {
+public protocol TravellerWayFindingProtocol {
     func push<T>(to destination: ControllerDestination, hidesTopBar: Bool, hidesBottomBar: Bool, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, animated: Bool, configure: ((T) -> Void)?) -> T? where T: UIViewController
     func present<T>(to destination: ControllerDestination, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, animated: Bool, configure: ((T) -> Void)?) -> T? where T : UIViewController
     func performSegue<T>(to destination: ControllerDestination , storyBoardProtocol: TravellerStoryBoardProtocol, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController
