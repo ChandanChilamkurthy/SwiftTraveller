@@ -51,7 +51,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      4. Finally we are presenting the controller & returning it.
      */
     
-    public func present<T>(to destination: ControllerDestination, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, animated: Bool, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    public func present<T>(to destination: ControllerDestination, modelPresentationStyle: UIModalPresentationStyle, modelTransistionStyle: UIModalTransitionStyle, hidesTopBar: Bool, hidesBottomBar: Bool, animated: Bool, configure: ((T) -> Void)?) -> T? where T : UIViewController {
         if let viewController = UIViewController.makeViewController(for: destination, storyBoard: self.storyBoard, modelPresentationStyle: modelPresentationStyle, modelTransistionStyle: modelTransistionStyle) as? T, let topViewController = self.viewController {
             configure?(viewController)
             self.stackStorage()
@@ -59,6 +59,7 @@ extension WayFinding: TravellerWayFindingProtocol {
             let wayFinding = WayFinding(navigation: navigation, viewController: viewController, storyBoard: viewController.storyboard)
             Traveller.shared.config(wayFinding: wayFinding)
             viewController.endEditing()
+            viewController.navigationController?.setNavigationBarHidden(hidesTopBar, animated: false)
             topViewController.present(navigation, animated: animated, completion: nil)
             viewController.navigationController?.presentationController?.delegate = self
             return viewController
@@ -75,7 +76,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      Note: If you'r using tabbar controller in your application, call this function in you'r TabBarController delegate method didSelect. In-order to manage navigation stack in tabbar controller.
      */
     
-    public func performSegue<T>(to destination: ControllerDestination , storyBoardProtocol: TravellerStoryBoardProtocol, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    public func performSegue<T>(to destination: ControllerDestination , storyBoardProtocol: TravellerStoryBoardProtocol, modelTransistionStyle: UIModalTransitionStyle, hidesTopBar: Bool, hidesBottomBar: Bool, animated: Bool, configure: ((T) -> Void)?) -> T? where T : UIViewController {
         if let viewController = UIViewController.makeViewController(for: destination, storyBoard: storyBoardProtocol, modelPresentationStyle: nil, modelTransistionStyle: modelTransistionStyle) as? T, let topViewController: TravellerViewControllerProtocol = self.viewController {
             configure?(viewController)
             viewController.endEditing()
@@ -170,7 +171,7 @@ extension WayFinding: TravellerWayFindingProtocol {
      */
     
     public func popToViewController<T>(destination: ControllerDestination, animated: Bool, modelTransistionStyle: UIModalTransitionStyle, configure: ((T) -> Void)?) -> T? where T : UIViewController {
-        
+
         if let navigationController = self.navigation {
             
             for controller in navigationController.viewControllers {

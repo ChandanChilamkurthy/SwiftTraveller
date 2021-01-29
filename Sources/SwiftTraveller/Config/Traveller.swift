@@ -89,12 +89,12 @@ extension Traveller {
         /**
          !* @discussion:  This function will help to change the window rootViewController.
          */
-        case switchRootViewController(storyBoard: TravellerStoryBoardProtocol, controllerDestination: ControllerDestination, animated: Bool, window: TravellerWindowProtocol?, modelTransistion: UIView.AnimationOptions)
+        case switchRootViewController(storyBoard: TravellerStoryBoardProtocol, controllerDestination: ControllerDestination, hidesTopBar: Bool, hidesBottomBar: Bool, animated: Bool, window: TravellerWindowProtocol?, modelTransistion: UIView.AnimationOptions)
         
         /**
          !* @discussion:  This function will help to present the ViewController from curren ViewController as a root navigation.
          */
-        case present(controller: ControllerDestination, animated: Bool, modelTransistion: UIModalTransitionStyle, modelPresentation: UIModalPresentationStyle)
+        case present(controller: ControllerDestination, animated: Bool, hidesTopBar: Bool, hidesBottomBar: Bool, modelTransistion: UIModalTransitionStyle, modelPresentation: UIModalPresentationStyle)
         
         /**
          !* @discussion:  This function will help to push the ViewController from curren ViewController navigation.
@@ -105,7 +105,7 @@ extension Traveller {
          !* @discussion:  This function will help to performSegue to respective  ViewController using UIStoryBoardSegue.
          !* @note:  In-Order to use this we need to wire segues in StoryBoard.
          */
-        case performSegue(segue: ControllerDestination, stroyPorotocol: TravellerStoryBoardProtocol, modelTransistion: UIModalTransitionStyle)
+        case performSegue(segue: ControllerDestination, stroyPorotocol: TravellerStoryBoardProtocol, modelTransistion: UIModalTransitionStyle, animated: Bool, hidesTopBar: Bool, hidesBottomBar: Bool)
         
         
         /**
@@ -146,21 +146,21 @@ extension Traveller {
         @discardableResult
         public func perform<T>(_ configure: ((T) -> Void)? = nil) -> T? where T: UIViewController {
             switch self {
-                case let .switchRootViewController(storyBoard, destination, animated, window, modelTransistion):
-                    return Traveller.shared.switchRootViewController(destination: destination, storyBoard: storyBoard, animated: animated, window: window, animations: modelTransistion, configure: configure)
-                case let .present(controller, animated, modelTransistion, modelPresentation):
-                    return Traveller.shared.wayFinding?.present(to: controller, modelPresentationStyle: modelPresentation, modelTransistionStyle: modelTransistion, animated: animated, configure: configure)
+                case let .switchRootViewController(storyBoard, destination, hidesTopBar, hidesBottomBar, animated, window, modelTransistion):
+                    return Traveller.shared.switchRootViewController(destination: destination, storyBoard: storyBoard,hidesTopBar: hidesTopBar, hidesBottomBar: hidesBottomBar, animated: animated, window: window, animations: modelTransistion, configure: configure)
+                case let .present(controller, hidesTopBar, hidesBottomBar, animated, modelTransistion, modelPresentation):
+                    return Traveller.shared.wayFinding?.present(to: controller, modelPresentationStyle: modelPresentation, modelTransistionStyle: modelTransistion, hidesTopBar: hidesTopBar, hidesBottomBar: hidesBottomBar, animated: animated, configure: configure)
                 case let .push(controller, animated, hidesTopBar, hidesBottomBar, modelTransistion, modelPresentation):
                     return Traveller.shared.wayFinding?.push(to: controller, hidesTopBar: hidesTopBar, hidesBottomBar: hidesBottomBar, modelPresentationStyle: modelPresentation, modelTransistionStyle: modelTransistion, animated: animated, configure: configure)
-                case let .performSegue(segue, stroyPorotocol, modelTransistion):
-                    return Traveller.shared.wayFinding?.performSegue(to: segue, storyBoardProtocol: stroyPorotocol, modelTransistionStyle: modelTransistion, configure: configure)
+                case let .performSegue(segue, stroyPorotocol, modelTransistion, animated, hidesTopBar, hidesBottomBar):
+                    return Traveller.shared.wayFinding?.performSegue(to: segue, storyBoardProtocol: stroyPorotocol, modelTransistionStyle: modelTransistion, hidesTopBar: hidesTopBar, hidesBottomBar: hidesBottomBar, animated: animated, configure: configure)
                 case let .addChild(childController, modelTransistionStyle):
                     return Traveller.shared.wayFinding?.addChild(to: childController, modelTransistionStyle: modelTransistionStyle, configure: configure)
                 case .removeChild:
                     Traveller.shared.wayFinding?.removeChild()
                 case let .pop(toRootController, animated, modelTransistionStyle):
                     Traveller.shared.wayFinding?.pop(toRootController: toRootController, animated: animated, modelTransistionStyle: modelTransistionStyle)
-                case let .popToViewController(destination, animated, modelTransistionStyle):
+                case let .popToViewController(destination, animated,  modelTransistionStyle):
                     return Traveller.shared.wayFinding?.popToViewController(destination: destination, animated: animated, modelTransistionStyle: modelTransistionStyle, configure: configure)
                 case let .dismiss(modelTransistionStyle, animated, dismissed):
                     Traveller.shared.wayFinding?.dismiss(modelTransistionStyle: modelTransistionStyle, animated: animated, dismissed: dismissed)
@@ -189,7 +189,7 @@ private extension Traveller {
      !* @discussion:  This function will help to change the window rootViewController.
      */
     
-    func switchRootViewController<T>(destination: ControllerDestination, storyBoard: TravellerStoryBoardProtocol , animated: Bool, window: TravellerWindowProtocol?, animations: UIView.AnimationOptions,  configure: ((T) -> Void)?) -> T? where T : UIViewController {
+    func switchRootViewController<T>(destination: ControllerDestination, storyBoard: TravellerStoryBoardProtocol , hidesTopBar: Bool, hidesBottomBar: Bool, animated: Bool, window: TravellerWindowProtocol?, animations: UIView.AnimationOptions,  configure: ((T) -> Void)?) -> T? where T : UIViewController {
         
         guard let window = window else { fatalError("switchRootViewController window is nil") }
         
@@ -207,7 +207,7 @@ private extension Traveller {
         window.makeKeyAndVisible()
 
         if let navigation = window.rootViewController as? UINavigationController, let currentViewController = UIViewController.makeViewController(for: destination, storyBoard: storyBoard, modelPresentationStyle: UIModalPresentationStyle.none, modelTransistionStyle: .crossDissolve){
-            
+     
             viewController = currentViewController
             wayFinding = WayFinding(navigation: navigation, viewController: navigation.topViewController, storyBoard: currentViewController.storyboard)
         }
@@ -218,7 +218,8 @@ private extension Traveller {
             wayFinding = WayFinding(navigation: navigation, viewController: viewController, storyBoard: topViewController.storyboard)
         }
         
-
+        viewController?.hidesBottomBarWhenPushed = hidesBottomBar
+        viewController?.navigationController?.setNavigationBarHidden(hidesTopBar, animated:false)
         Traveller.shared.config(wayFinding: wayFinding)
         configure?(viewController as! T)
         return viewController as? T
